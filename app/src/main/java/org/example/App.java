@@ -3,12 +3,41 @@
  */
 package org.example;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+    private static final Queue<String> stockHistory = new LinkedList<>();
+
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        Runnable task = () -> {
+            try {
+                Stock dow = YahooFinance.get("^DJI");
+                BigDecimal price = dow.getQuote().getPrice();
+                LocalDateTime now = LocalDateTime.now();
+                String record = now + " - DJI: $" + price;
+                stockHistory.add(record);
+                System.out.println(record);
+            }
+            catch (IOException e) {
+            System.err.println("Error fetching stock data: " + e.getMessage());
+            }
+        };
+
+        scheduler.scheduleAtFixedRate(task, 0, 5, TimeUnit.SECONDS);
+
+
     }
 }

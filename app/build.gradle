@@ -13,6 +13,9 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 dependencies {
@@ -24,7 +27,7 @@ dependencies {
     // This dependency is used by the application.
     implementation libs.guava
 
-    implementation group: 'com.yahoofinance-api', name: 'YahooFinanceAPI', version: '3.17.0'
+    implementation files('lib/YahooFinanceAPI-3.17.0.jar')
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
